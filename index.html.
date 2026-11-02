@@ -1,0 +1,246 @@
+
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Детектив: Гомеостаз құпиясы</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;font-family:Arial,sans-serif;
+ background:linear-gradient(135deg,#101a35,#172e50,#173d54);
+ color:white;min-height:100vh
+}
+header{
+ text-align:center;padding:35px 15px;
+ background:rgba(0,0,0,.25);
+ border-bottom:1px solid #3b6682
+}
+header h1{color:#65e6dc;font-size:clamp(25px,5vw,42px)}
+header p{color:#d1e8ed}
+.container{max-width:950px;margin:25px auto;padding:15px}
+.panel{
+ background:#1c3150;border:1px solid #42617d;
+ border-radius:18px;padding:24px;margin-bottom:20px;
+ box-shadow:0 8px 25px #08132366
+}
+h2{color:#69e5da}
+button{
+ background:#16a99f;color:white;border:0;
+ padding:13px 20px;border-radius:10px;
+ cursor:pointer;font-size:16px;margin:7px;
+ transition:.2s
+}
+button:hover{background:#087c78;transform:translateY(-2px)}
+.option{
+ display:block;width:100%;text-align:left;
+ background:#294765;margin:10px 0;
+ border:1px solid #55748d
+}
+.option:hover{background:#32617a}
+.hidden{display:none}
+.badge{color:#75eee0;font-weight:bold}
+.clue{
+ background:#263f5e;padding:15px;
+ border-left:4px solid #65e6dc;
+ border-radius:8px;margin:12px 0
+}
+#feedback{font-weight:bold;margin-top:15px}
+.progress{height:10px;background:#33445b;border-radius:10px;overflow:hidden}
+#bar{height:100%;width:0;background:#61e5d6;transition:.3s}
+footer{text-align:center;padding:25px;color:#a9c4d4}
+</style>
+</head>
+<body>
+
+<header>
+ <div style="font-size:42px">🔍 🧬</div>
+ <h1>ДЕТЕКТИВ: ГОМЕОСТАЗ ҚҰПИЯСЫ</h1>
+ <p>Адам ағзасындағы тепе-теңдікті қалпына келтір!</p>
+</header>
+
+<main class="container">
+
+<section class="panel" id="intro">
+ <h2>🕵️ Құпия іске қош келдің!</h2>
+ <p>
+ Қаладағы ғылыми зертханада түсініксіз жағдай орын алды.
+ Адам ағзасының ішкі температурасы өзгеріп, қалыпты тепе-теңдік бұзылды.
+ </p>
+ <p>
+ Сен — жас детективсің! Міндетің: оқиға орнын зерттеу,
+ дәлелдерді жинау және гомеостаздың қалай жұмыс істейтінін анықтау.
+ </p>
+ <div class="clue">
+ <b>📁 Детективтік іс №001</b><br>
+ Тергеу тақырыбы: Терморегуляция және гомеостаз.<br>
+ Мақсат: Ағзаның ішкі тұрақтылығын қалпына келтіру.
+ </div>
+ <button onclick="startGame()">Тергеуді бастау →</button>
+</section>
+
+<section class="panel hidden" id="game">
+ <div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap">
+  <span class="badge" id="stage">1-кезең</span>
+  <span class="badge">Ұпай: <span id="score">0</span></span>
+ </div>
+ <div class="progress"><div id="bar"></div></div>
+ <h2 id="questionTitle"></h2>
+ <p id="story"></p>
+ <div id="clues"></div>
+ <div id="answers"></div>
+ <div id="feedback"></div>
+ <button id="next" class="hidden" onclick="nextStage()">Келесі кезең →</button>
+</section>
+
+<section class="panel hidden" id="result">
+ <h2>🏆 Тергеу аяқталды!</h2>
+ <div style="font-size:55px;text-align:center">🕵️‍♀️</div>
+ <h2 id="resultTitle" style="text-align:center"></h2>
+ <p id="resultText" style="text-align:center"></p>
+ <div class="clue">
+  <b>🔬 Тергеудің қорытындысы</b>
+  <p>Гомеостаз — ағзаның ішкі ортасының салыстырмалы тұрақтылығын сақтау қабілеті.</p>
+  <p>Терморегуляция — дене температурасының тұрақтылығын қамтамасыз ететін үдеріс.</p>
+  <p>Бұл үдерісте гипоталамус, тер бездері, қан тамырлары және бұлшықеттер маңызды рөл атқарады.</p>
+ </div>
+ <button onclick="restart()">Қайта тергеу 🔄</button>
+</section>
+
+</main>
+
+<footer>© Биология әлемі | «Гомеостаз құпиясы» интерактивті ойыны</footer>
+
+<script>
+const stages=[
+{
+ title:"1-кезең. Оқиға орнын зерттеу",
+ story:"Зертханада адамның дене температурасы 38,5°C-қа көтерілгені анықталды. Детектив, бұл жағдайды қалай түсіндіресің?",
+ clues:["Дәлел №1: Қалыпты дене температурасы шамамен 36,5–37°C.","Дәлел №2: Дене температурасының көтерілуі ағзадағы өзгерісті білдіреді."],
+ question:"Ағзаның ішкі ортасының тұрақтылығын сақтау қалай аталады?",
+ answers:["Гомеостаз","Фотосинтез","Тыныс алу"],
+ correct:0,
+ explanation:"Дұрыс! Гомеостаз ағзаның ішкі ортасының тұрақтылығын сақтайды."
+},
+{
+ title:"2-кезең. Күдіктіні анықтау",
+ story:"Зерттеушілер мидың белгілі бір бөлігінің жұмысын тексерді. Ол дене температурасының өзгерісін бақылайды.",
+ clues:["Дәлел №3: Бұл ми бөлімі дене температурасын реттейді.","Дәлел №4: Ол терлеу мен дірілдеу үдерістерін басқарады."],
+ question:"Дене температурасын реттейтін мидың бөлігі қалай аталады?",
+ answers:["Мишық","Гипоталамус","Сопақша ми"],
+ correct:1,
+ explanation:"Дұрыс! Гипоталамус — терморегуляцияның негізгі басқару орталығы."
+},
+{
+ title:"3-кезең. Жаңа дәлел",
+ story:"Куәгердің айтуынша, адам ыстық жерде ұзақ уақыт болған. Оның терісі ылғалданып, терлей бастаған.",
+ clues:["Дәлел №5: Тер бездері белсенді жұмыс істейді.","Дәлел №6: Тердің булануы денені салқындатады."],
+ question:"Ыстық кезде ағзаның салқындауына қандай үдеріс көмектеседі?",
+ answers:["Терлеу","Дірілдеу","Шаштың өсуі"],
+ correct:0,
+ explanation:"Тамаша! Тердің булануы арқылы ағза артық жылуды сыртқа шығарады."
+},
+{
+ title:"4-кезең. Қылмыстың ізін табу",
+ story:"Енді зертханаға суық ортада болған адам келді. Оның денесі қалтырап, бұлшықеттері жиырылып жатыр.",
+ clues:["Дәлел №7: Бұлшықеттер жиі жиырылады.","Дәлел №8: Бұл әрекет жылу өндіруді арттырады."],
+ question:"Суық кезде дененің дірілдеуі не үшін қажет?",
+ answers:["Денені салқындату үшін","Жылу өндіру үшін","Тер бөлінуін арттыру үшін"],
+ correct:1,
+ explanation:"Дұрыс! Бұлшықеттердің жиырылуы жылу өндіруді арттырады."
+},
+{
+ title:"5-кезең. Соңғы шешім",
+ story:"Барлық дәлелдер жиналды! Енді ағзаның қалыпты температураны қалай сақтайтынын түсіндіруің керек.",
+ clues:["Дәлел №9: Ыстықта терлеу және тері тамырларының кеңеюі байқалады.","Дәлел №10: Суықта дірілдеу және тері тамырларының тарылуы байқалады."],
+ question:"Ағза температура өзгергенде оны қалыпқа келтіру үшін қандай механизмді қолданады?",
+ answers:["Кері байланыс механизмі","Ас қорыту механизмі","Фотосинтез механизмі"],
+ correct:0,
+ explanation:"Керемет! Кері байланыс механизмі ағзаның ішкі тепе-теңдігін сақтауға көмектеседі."
+}
+];
+
+let current=0;
+let score=0;
+let answered=false;
+
+function startGame(){
+ document.getElementById("intro").classList.add("hidden");
+ document.getElementById("game").classList.remove("hidden");
+ showStage();
+}
+
+function showStage(){
+ answered=false;
+ const s=stages[current];
+ document.getElementById("stage").textContent=s.title;
+ document.getElementById("bar").style.width=(current/stages.length*100)+"%";
+ document.getElementById("questionTitle").textContent=s.question;
+ document.getElementById("story").textContent=s.story;
+ document.getElementById("clues").innerHTML=s.clues.map(c=>`<div class="clue">🔎 ${c}</div>`).join("");
+ document.getElementById("feedback").textContent="";
+ document.getElementById("next").classList.add("hidden");
+ const area=document.getElementById("answers");
+ area.innerHTML="";
+ s.answers.forEach((answer,i)=>{
+  const btn=document.createElement("button");
+  btn.className="option";
+  btn.textContent=String.fromCharCode(65+i)+". "+answer;
+  btn.onclick=()=>checkAnswer(i,btn);
+  area.appendChild(btn);
+ });
+}
+
+function checkAnswer(i,btn){
+ if(answered)return;
+ answered=true;
+ const s=stages[current];
+ const feedback=document.getElementById("feedback");
+ if(i===s.correct){
+  score+=20;
+  feedback.style.color="#70f3b0";
+  feedback.textContent="✅ "+s.explanation+" +20 ұпай!";
+ }else{
+  feedback.style.color="#ffaaaa";
+  feedback.textContent="❌ Дұрыс жауап: "+s.answers[s.correct]+". "+s.explanation;
+ }
+ document.getElementById("score").textContent=score;
+ document.querySelectorAll(".option").forEach(b=>b.disabled=true);
+ document.getElementById("next").classList.remove("hidden");
+ document.getElementById("next").textContent=current===stages.length-1?"Нәтижені көру 🏆":"Келесі кезең →";
+}
+
+function nextStage(){
+ current++;
+ if(current<stages.length){
+  showStage();
+ }else{
+  finish();
+ }
+}
+
+function finish(){
+ document.getElementById("game").classList.add("hidden");
+ document.getElementById("result").classList.remove("hidden");
+ document.getElementById("bar").style.width="100%";
+ document.getElementById("resultTitle").textContent=
+  score>=80?"🏆 Үздік детектив!":score>=60?"⭐ Жақсы тергеуші!":"🔍 Жас зерттеуші!";
+ document.getElementById("resultText").textContent=
+  "Сенің нәтижең: "+score+" / 100 ұпай. "+
+  (score>=80?"Сен гомеостаз құпиясын толық аштың!":
+  score>=60?"Жақсы жұмыс! Біліміңді одан әрі жетілдір!":
+  "Тағы бір рет зерттеп көр! Сенің қолыңнан келеді!");
+}
+
+function restart(){
+ current=0;
+ score=0;
+ document.getElementById("score").textContent=0;
+ document.getElementById("result").classList.add("hidden");
+ document.getElementById("intro").classList.remove("hidden");
+ document.getElementById("bar").style.width="0";
+}
+</script>
+</body>
+</html>
